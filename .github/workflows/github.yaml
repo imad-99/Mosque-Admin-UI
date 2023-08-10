@@ -33,4 +33,4 @@ jobs:
             # pull new image
             docker pull imadelfetouh99/mosque-admin-ui:latest
             # run new image
-            docker run -d -p 81:8080 --cpus '0.5' --memory 512M -e VITE_APP_ENABLE_AUTH=false -e VITE_APP_API_BASE_URI=http://159.223.216.49:8081/api imadelfetouh99/mosque-admin-ui:latest
+            docker run -d -p 81:8080 --cpus '0.5' --memory 512M imadelfetouh99/mosque-admin-ui:latest
