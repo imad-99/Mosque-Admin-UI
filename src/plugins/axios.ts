@@ -6,10 +6,13 @@ const axiosIns = axios.create({
 
 // ℹ️ Add request interceptor to send the authorization header on each subsequent request after login
 axiosIns.interceptors.request.use(config => {
-  const token = localStorage.getItem(import.meta.env.VITE_APP_TOKEN_KEY)
+  const enableAuth = import.meta.env.VITE_APP_ENABLE_AUTH
+  if (enableAuth && Boolean(enableAuth)) { 
+    const token = localStorage.getItem(import.meta.env.VITE_APP_TOKEN_KEY)
 
-  config.headers.Authorization = 'Bearer ' + token
-
+    config.headers.Authorization = 'Bearer ' + token
+  }
+  
   return config
 })
 
