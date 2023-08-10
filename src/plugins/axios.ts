@@ -6,6 +6,10 @@ const axiosIns = axios.create({
 
 // ℹ️ Add request interceptor to send the authorization header on each subsequent request after login
 axiosIns.interceptors.request.use(config => {
+  const token = localStorage.getItem(import.meta.env.VITE_APP_TOKEN_KEY)
+
+  config.headers.Authorization = 'Bearer ' + token
+
   return config
 })
 
@@ -15,7 +19,8 @@ axiosIns.interceptors.response.use(response => {
 }, error => {
   // Handle error
   if (error.response && error.response.status === 401) {
-    window.location.href = 'https://www.google.nl'
+    localStorage.removeItem(import.meta.env.VITE_APP_TOKEN_KEY)
+    window.location.href = import.meta.env.VITE_APP_KEYCLOAK_LOGIN_URL
   }
   else {
     return Promise.reject(error)

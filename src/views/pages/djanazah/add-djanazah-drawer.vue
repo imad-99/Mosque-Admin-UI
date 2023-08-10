@@ -1,20 +1,20 @@
 <script lang="ts">
 import { Prayer } from '@/views/shared/prayer';
 import DjanazahController from '@api/controller/djanazah/djanazah-controller';
+import { AxiosError } from 'axios';
 import { Component, Prop, Vue } from 'vue-facing-decorator';
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 import DjanazahDrawerEmit from './djanazah-drawer-emit';
 
-// non-state variables
-const djanazahController: DjanazahController = new DjanazahController();
-
 @Component({
     components: {
         PerfectScrollbar
-    }
+    },
+    emits: ['djanazahDrawer']
 })
 export default class AddDjanazahDrawer extends Vue {
 
+    // state
     @Prop() isDrawerOpen: boolean = false
     readonly prayers: string[] = Object.values(Prayer)
     isFormValid: boolean = false
@@ -23,7 +23,11 @@ export default class AddDjanazahDrawer extends Vue {
     after: Prayer = Prayer.DOHR;
     photo: string = ""
 
-    defaultValidator(value: string): true | string {
+
+    // non-state
+    djanazahController: DjanazahController = new DjanazahController();
+
+    public defaultValidator(value: string): true | string {
         if (!value) {
             return "Dit is een verplicht veld"
         }
@@ -39,11 +43,11 @@ export default class AddDjanazahDrawer extends Vue {
     }
 
     private addDjanazah(): void {
-        djanazahController.addDjanazah(this.fullName, this.date, this.after, this.photo)
+        this.djanazahController.addDjanazah(this.fullName, this.date, this.after, this.photo)
         .then(() => {
             this.emitDrawerValue({ visible: false, reload: true })
         })
-        .catch((error) => {
+        .catch((error: AxiosError) => {
             console.log(error)
         })
     }

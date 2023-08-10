@@ -1,0 +1,36 @@
+on:
+  push:
+    branches: 
+      - master
+jobs:
+  build_nuxt_app:
+    name: Deploy vue app
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup checkout
+        uses: actions/checkout@v3
+      - name: install dependencies
+        run: npm install
+      - name: build dockerfile
+        run: docker build -t imadelfetouh99/mosque-admin-ui:latest .
+      - name: login into docker-hub
+        run: docker login -u imadelfetouh99 -p Barcelona#10112
+      - name: push to docker-hub
+        run: docker push imadelfetouh99/mosque-admin-ui
+      - name: deploy in digitalOcean
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: 159.223.216.49
+          username: root
+          key: ${{ secrets.PRIVATE_DIGITAL_OCEAN }}
+          script: |
+            # stop container
+            docker container stop $(docker ps -a | grep imadelfetouh99/mosque-admin-ui:latest | awk '{print $1}')
+            # delete all stopped containers
+            docker container prune -f
+            # delete old image
+            docker image rm imadelfetouh99/mosque-admin-ui:latest
+            # pull new image
+            docker pull imadelfetouh99/mosque-admin-ui:latest
+            # run new image
+            docker run -d -p 80:80 --cpus '0.5' --memory 512M -e VITE_APP_ENABLE_AUTH=false -e VITE_APP_API_BASE_URI=http://159.223.216.49:8081/api imadelfetouh99/mosque-admin-ui:latest

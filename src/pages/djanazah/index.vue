@@ -9,9 +9,6 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { Component, toNative } from 'vue-facing-decorator';
 import { VDataTableServer } from 'vuetify/labs/VDataTable';
 
-// non-state variables
-const djanazahController: DjanazahController = new DjanazahController();
-
 @Component({
   components: {
     VDataTableServer,
@@ -32,6 +29,9 @@ class DjanazahPage extends PaginationComponent {
     { title: 'Acties', key: 'actions', sortable: false }
   ]
 
+  // non-state
+  djanazahController: DjanazahController = new DjanazahController();
+
   // methods
   private fetchDjanazah(page: number, itemsPerPage: number) {
     this.isLoading = true
@@ -40,7 +40,7 @@ class DjanazahPage extends PaginationComponent {
     filters.set('page', page)
     filters.set('itemsPerPage', itemsPerPage)
 
-    djanazahController.fetchDjanazah(filters)
+    this.djanazahController.fetchDjanazah(filters)
     .then((response: AxiosResponse) => {
       this.tableFilter = { page: response.data.currentPage, itemsPerPage: response.data.itemsPerPage }
       this.totalItems = response.data.totalItems
@@ -53,7 +53,7 @@ class DjanazahPage extends PaginationComponent {
     })
   }
 
-  public loadItems(tableFilter: TableFilter) {
+  public refreshTable(tableFilter: TableFilter) {
     this.fetchDjanazah(tableFilter.page, tableFilter.itemsPerPage)
   }
 
@@ -71,7 +71,7 @@ class DjanazahPage extends PaginationComponent {
   public deleteDjanazah(): void {
     this.viewDeleteDialog = false
     this.isLoading = true
-    djanazahController.deleteDjanazah(this.documentIdToDelete, this.entryIdToDelete)
+    this.djanazahController.deleteDjanazah(this.documentIdToDelete, this.entryIdToDelete)
     .then(() => {
       this.fetchDjanazah(this.tableFilter.page, this.tableFilter.itemsPerPage)
     })
@@ -81,15 +81,15 @@ class DjanazahPage extends PaginationComponent {
     })
   }
 
+  public showDjanazahDrawer() {
+    this.viewDjanazahDrawer = true
+  }
+  
   public handleDrawerEvent(value: DjanazahDrawerEmit) {
     this.viewDjanazahDrawer = value.visible
     if (value.reload) {
-      this.fetchDjanazah(this.tableFilter.page, this.tableFilter.itemsPerPage)
+      this.fetchDjanazah(this.tableFilter.page, this.tableFilter.itemsPerPage) 
     }
-  }
-
-  public showDjanazahDrawer() {
-    this.viewDjanazahDrawer = true
   }
 }
 
@@ -112,7 +112,7 @@ export default toNative(DjanazahPage)
               :items-length="totalItems"
               :headers="tableHeaders"
               :loading="isLoading"
-              @update:options="loadItems"
+              @update:options="refreshTable"
               class="text-no-wrap">
             <template #item.name="{ item }">
               <span class="text-capitalize font-weight-medium">{{ item.props.title.name }}</span>
