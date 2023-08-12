@@ -12,14 +12,14 @@ jobs:
       - name: install dependencies
         run: npm install
       - name: build dockerfile
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/mosque-admin-ui:latest .
+        run: docker build -t imadelfetouh99/mosque-admin-ui:latest .
       - name: login into docker-hub
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: imadelfetouh99
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: push to docker-hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/mosque-admin-ui
+        run: docker push imadelfetouh99/mosque-admin-ui
       - name: transfer docker-compose file
         uses: appleboy/scp-action@master
         with:
