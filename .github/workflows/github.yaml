@@ -12,7 +12,7 @@ jobs:
       - name: install dependencies
         run: npm install
       - name: build dockerfile
-        run: docker build -t imadelfetouh99/mosque-admin-ui:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/mosque-admin-ui:latest .
       - name: login into docker-hub
         uses: docker/login-action@v1
         with:
@@ -26,8 +26,8 @@ jobs:
           host: ${{ secrets.PRIVATE_DIGITAL_OCEAN_HOST }}
           username: ${{ secrets.PRIVATE_DIGITAL_OCEAN_USERNAME }}
           key: ${{ secrets.PRIVATE_DIGITAL_OCEAN }}
-          source: "docker-compose.yaml"
-          target: "/root/mosque-admin-ui/docker-compose.yaml"
+          source: "./docker-compose.yaml"
+          target: "/root/mosque-admin-ui"
       - name: deploy in digitalOcean
         uses: appleboy/ssh-action@v0.1.7
         with:
