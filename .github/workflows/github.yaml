@@ -19,7 +19,7 @@ jobs:
           username: imadelfetouh99
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: push to docker-hub
-        run: docker push imadelfetouh99/mosque-admin-ui
+        run: docker push imadelfetouh99/mosque-admin-ui:latest
       - name: transfer docker-compose file
         uses: appleboy/scp-action@v0.1.3
         with:
