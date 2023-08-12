@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  Mosque-Admin-UI:
+    image: imadelfetouh99/mosque-admin-ui:latest
+    container_name: mosque-admin-ui
+    ports:
+      - "80:8080"
+    restart: "no"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M

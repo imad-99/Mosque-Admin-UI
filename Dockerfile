@@ -6,9 +6,10 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install
+RUN npm instal  l
 
 RUN npm run build
 
-EXPOSE 80
+EXPOSE 8080
+
 CMD [ "http-server", "dist" ]

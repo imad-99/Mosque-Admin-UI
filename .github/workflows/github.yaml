@@ -1,9 +1,9 @@
 on:
   push:
-    branches: 
+    branches:
       - master
 jobs:
-  build_nuxt_app:
+  deploy_vue_app:
     name: Deploy vue app
     runs-on: ubuntu-latest
     steps:
@@ -14,14 +14,25 @@ jobs:
       - name: build dockerfile
         run: docker build -t imadelfetouh99/mosque-admin-ui:latest .
       - name: login into docker-hub
-        run: docker login -u imadelfetouh99 -p Barcelona#10112
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: push to docker-hub
-        run: docker push imadelfetouh99/mosque-admin-ui
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/mosque-admin-ui
+      - name: transfer docker-compose file
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.PRIVATE_DIGITAL_OCEAN_HOST }}
+          username: ${{ secrets.PRIVATE_DIGITAL_OCEAN_USERNAME }}
+          key: ${{ secrets.PRIVATE_DIGITAL_OCEAN }}
+          source: "docker-compose.yaml"
+          target: "/root/mosque-admin-ui/docker-compose.yaml"
       - name: deploy in digitalOcean
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: 159.223.216.49
-          username: root
+          host: ${{ secrets.PRIVATE_DIGITAL_OCEAN_HOST }}
+          username: ${{ secrets.PRIVATE_DIGITAL_OCEAN_USERNAME }}
           key: ${{ secrets.PRIVATE_DIGITAL_OCEAN }}
           script: |
             # stop container
@@ -32,5 +43,7 @@ jobs:
             docker image rm imadelfetouh99/mosque-admin-ui:latest
             # pull new image
             docker pull imadelfetouh99/mosque-admin-ui:latest
+            # navigate to docker-compose file
+            cd mosque-admin-ui
             # run new image
-            docker run -d -p 81:8080 --cpus '0.5' --memory 512M imadelfetouh99/mosque-admin-ui:latest
+            docker-compose up -d
