@@ -11,7 +11,6 @@ const router = createRouter({
   ],
 })
 
-// Docs: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
 router.beforeEach(() => {
   const enableAuth = import.meta.env.VITE_APP_ENABLE_AUTH
   if (enableAuth && Boolean(enableAuth)) {
@@ -29,7 +28,7 @@ router.beforeEach(() => {
           localStorage.setItem(import.meta.env.VITE_APP_TOKEN_KEY, token)
         })
         .catch((error) => {
-          console.log("errororor")
+          localStorage.removeItem(import.meta.env.VITE_APP_TOKEN_KEY)
           console.log(error)
         })
       }
