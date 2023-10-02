@@ -2,7 +2,7 @@
 import { Prayer } from '@/views/shared/prayer';
 import DjanazahController from '@api/controller/djanazah/djanazah-controller';
 import { AxiosError } from 'axios';
-import { Component, Prop, Vue } from 'vue-facing-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-facing-decorator';
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 import DjanazahDrawerEmit from './djanazah-drawer-emit';
 
@@ -15,17 +15,62 @@ import DjanazahDrawerEmit from './djanazah-drawer-emit';
 export default class AddDjanazahDrawer extends Vue {
 
     // state
-    @Prop() isDrawerOpen: boolean = false
+    @Prop() 
+    isDrawerOpen: boolean = false
+    @Prop() 
+    inputId: string = ""
+    @Prop() 
+    inputFullName: string = ""
+    @Prop() 
+    inputDate: string = ""
+    @Prop() 
+    inputAfter: Prayer = Prayer.DOHR;
+    @Prop() 
+    inputPhoto: string = ""
+
     readonly prayers: string[] = Object.values(Prayer)
     isFormValid: boolean = false
+    id: string = ""
     fullName: string = ""
     date: string = ""
+    oldDate: string = ""
     after: Prayer = Prayer.DOHR;
     photo: string = ""
 
-
     // non-state
     djanazahController: DjanazahController = new DjanazahController();
+
+    // watchers
+    @Watch("inputId")
+    idWatcher(newValue: string) {
+        this.id = newValue ? newValue : ""
+    }
+
+    @Watch("inputFullName")
+    fullNameWatcher(newValue: string) {
+        this.fullName = newValue ? newValue : ""
+    }
+
+    @Watch("inputDate")
+    dateWatcher(newValue: string) {
+        if (newValue) {
+            this.date = newValue
+            this.oldDate = newValue
+        } else {
+            this.date = ""
+            this.oldDate = ""
+        }
+    }
+
+    @Watch("inputAfter")
+    afterWatcher(newValue: Prayer) {
+        this.after = newValue ? newValue : Prayer.DOHR
+    }
+
+    @Watch("inputPhoto")
+    photoWatcher(newValue: string) {
+        this.photo = newValue ? newValue : ""
+    }
 
     public defaultValidator(value: string): true | string {
         if (!value) {
@@ -43,12 +88,12 @@ export default class AddDjanazahDrawer extends Vue {
     }
 
     private addDjanazah(): void {
-        this.djanazahController.addDjanazah(this.fullName, this.date, this.after, this.photo)
+        this.djanazahController.addDjanazah(this.fullName, this.date, this.after, this.photo, this.id, this.oldDate)
         .then(() => {
             this.emitDrawerValue({ visible: false, reload: true })
         })
         .catch((error: AxiosError) => {
-            console.log(error)
+            alert(error.message)
         })
     }
 
@@ -59,11 +104,10 @@ export default class AddDjanazahDrawer extends Vue {
     private emitDrawerValue(emit: DjanazahDrawerEmit): void {
         this.$emit('djanazahDrawer', emit)
     }
-    
 }
 
 </script>
-7
+
 <template>
     <VNavigationDrawer
         temporary

@@ -32,8 +32,8 @@ export default class DjanazahController extends QueryParams {
         })
     }
 
-    addDjanazah(fullName: string, date: string, after: Prayer, photo: string): Promise<AxiosResponse> {
-        const data: { [key: string]: Object; } = { name: fullName, after: after, photo: photo, type: EventType.DJANAZAH }
+    addDjanazah(fullName: string, date: string, after: Prayer, photo: string, id?: string, oldDate?: string): Promise<AxiosResponse> {
+        const data: { [key: string]: Object | undefined; } = { id: id, name: fullName, oldDate: oldDate, after: after, photo: photo, type: EventType.DJANAZAH }
         const addDocument: AddDocument = { data: data, eventType: EventType.DJANAZAH }
 
         return new Promise<AxiosResponse>((resolve, reject) => {

@@ -24,12 +24,10 @@ router.beforeEach(() => {
         axios.post(import.meta.env.VITE_APP_KEYCLOAK_TOKEN_URL, formData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
         .then((result) => {
           const token = result.data.access_token
-          console.log(token)
           localStorage.setItem(import.meta.env.VITE_APP_TOKEN_KEY, token)
         })
-        .catch((error) => {
+        .catch(() => {
           localStorage.removeItem(import.meta.env.VITE_APP_TOKEN_KEY)
-          console.log(error)
         })
       }
     }

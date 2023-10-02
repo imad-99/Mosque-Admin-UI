@@ -2,6 +2,7 @@
 import AddDjanazahDrawer from '@/views/pages/djanazah/add-djanazah-drawer.vue';
 import DjanazahDrawerEmit from '@/views/pages/djanazah/djanazah-drawer-emit';
 import PaginationComponent from '@/views/shared/pagination-component';
+import { Prayer } from '@/views/shared/prayer';
 import TableFilter from '@/views/shared/table-filter';
 import TableHeader from '@/views/shared/table-header';
 import DjanazahController from '@api/controller/djanazah/djanazah-controller';
@@ -26,8 +27,16 @@ class DjanazahPage extends PaginationComponent {
     { title: 'Naam', key: 'name', sortable: false },
     { title: 'Datum', key: 'documentId', sortable: false },
     { title: 'Na', key: 'after', sortable: false },
+    { title: 'Foto', key: 'photo', sortable: false },
     { title: 'Acties', key: 'actions', sortable: false }
   ]
+
+  // output props (DjanazahDrawer)
+  id: string | undefined
+  fullName: string | undefined
+  date: string | undefined
+  after: Prayer | undefined   
+  photo: string | undefined
 
   // non-state
   djanazahController: DjanazahController = new DjanazahController();
@@ -47,8 +56,7 @@ class DjanazahPage extends PaginationComponent {
       this.items = response.data.items
       this.isLoading = false
     })
-    .catch((error: AxiosError) => {
-      console.log(error)
+    .catch(() => {
       this.isLoading = false
     })
   }
@@ -81,7 +89,12 @@ class DjanazahPage extends PaginationComponent {
     })
   }
 
-  public showDjanazahDrawer() {
+  public showDjanazahDrawer(id?: string, fullName?: string, date?: string, after?: Prayer, photo?: string) {
+    this.id = id
+    this.fullName = fullName
+    this.date = date
+    this.after = after
+    this.photo = photo
     this.viewDjanazahDrawer = true
   }
   
@@ -95,7 +108,6 @@ class DjanazahPage extends PaginationComponent {
 
 export default toNative(DjanazahPage)
 </script>
-
 
 <template>
   <section>
@@ -123,9 +135,15 @@ export default toNative(DjanazahPage)
             <template #item.after="{ item }">
               <span class="text-capitalize font-weight-medium">{{ item.props.title.after }}</span>
             </template>
+            <template #item.photo="{ item }">
+              <span class="text-capitalize font-weight-medium">{{ item.props.title.photo }}</span>
+            </template>
             <template #item.actions="{ item }">
               <IconBtn @click="showDeleteDialog(item.props.title.documentId, item.props.title.id, item.props.title.name)">
                 <VIcon icon="tabler-trash" />
+              </IconBtn>
+              <IconBtn @click="showDjanazahDrawer(item.props.title.id, item.props.title.name, item.props.title.documentId, item.props.title.after, item.props.title.photo)">
+                <VIcon icon="tabler-edit" />
               </IconBtn>
             </template>
           </VDataTableServer>
@@ -143,6 +161,13 @@ export default toNative(DjanazahPage)
         </VCardActions>
       </VCard>
     </VDialog>
-    <AddDjanazahDrawer :isDrawerOpen="viewDjanazahDrawer" @djanazahDrawer="handleDrawerEvent"/>
+    <AddDjanazahDrawer 
+      :isDrawerOpen="viewDjanazahDrawer" 
+      :inputId="id"
+      :inputFullName="fullName" 
+      :inputDate="date"
+      :inputAfter="after"
+      :inputPhoto="photo"
+      @djanazahDrawer="handleDrawerEvent"/>
   </section>
 </template>
