@@ -6,7 +6,7 @@ import PaginationComponent from '@/views/shared/pagination-component';
 import { Prayer } from '@/views/shared/prayer';
 import TableFilter from '@/views/shared/table-filter';
 import TableHeader from '@/views/shared/table-header';
-import DjanazahController from '@api/controller/djanazah/djanazah-controller';
+import LectureController from '@api/controller/lecture/lecture-controller';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Component, toNative } from 'vue-facing-decorator';
 import { VDataTableServer } from 'vuetify/labs/VDataTable';
@@ -17,7 +17,7 @@ import { VDataTableServer } from 'vuetify/labs/VDataTable';
     AddDjanazahDrawer
   }
 })
-class DjanazahPage extends PaginationComponent {
+class LecturePage extends PaginationComponent {
   // state
   viewDjanazahDrawer: boolean = false
   viewDeleteDialog: boolean = false
@@ -40,17 +40,17 @@ class DjanazahPage extends PaginationComponent {
   photo: string | undefined
 
   // non-state
-  djanazahController: DjanazahController = new DjanazahController();
+  lectureController: LectureController = new LectureController();
 
   // methods
-  private fetchDjanazah(page: number, itemsPerPage: number) {
+  private fetchLecture(page: number, itemsPerPage: number) {
     this.isLoading = true
     const filters: Map<string, Object> = new Map<string, Object>()
-    filters.set('type', EventType.DJANAZAH)
+    filters.set('type', EventType.LECTURE)
     filters.set('page', page)
     filters.set('itemsPerPage', itemsPerPage)
 
-    this.djanazahController.fetchDjanazah(filters)
+    this.lectureController.fetchLecture(filters)
     .then((response: AxiosResponse) => {
       this.tableFilter = { page: response.data.currentPage, itemsPerPage: response.data.itemsPerPage }
       this.totalItems = response.data.totalItems
@@ -63,7 +63,7 @@ class DjanazahPage extends PaginationComponent {
   }
 
   public refreshTable(tableFilter: TableFilter) {
-    this.fetchDjanazah(tableFilter.page, tableFilter.itemsPerPage)
+    this.fetchLecture(tableFilter.page, tableFilter.itemsPerPage)
   }
 
   public showDeleteDialog(documentId: string, entryId: string, name: string) {
@@ -77,12 +77,12 @@ class DjanazahPage extends PaginationComponent {
     this.viewDeleteDialog = false
   }
 
-  public deleteDjanazah(): void {
+  public deleteLecture(): void {
     this.viewDeleteDialog = false
     this.isLoading = true
-    this.djanazahController.deleteDjanazah(this.documentIdToDelete, this.entryIdToDelete)
+    this.lectureController.deleteLecture(this.documentIdToDelete, this.entryIdToDelete)
     .then(() => {
-      this.fetchDjanazah(this.tableFilter.page, this.tableFilter.itemsPerPage)
+      this.fetchLecture(this.tableFilter.page, this.tableFilter.itemsPerPage)
     })
     .catch((error: AxiosError) => {
       console.log(error)
@@ -102,12 +102,12 @@ class DjanazahPage extends PaginationComponent {
   public handleDrawerEvent(value: DjanazahDrawerEmit) {
     this.viewDjanazahDrawer = value.visible
     if (value.reload) {
-      this.fetchDjanazah(this.tableFilter.page, this.tableFilter.itemsPerPage) 
+      this.fetchLecture(this.tableFilter.page, this.tableFilter.itemsPerPage) 
     }
   }
 }
 
-export default toNative(DjanazahPage)
+export default toNative(LecturePage)
 </script>
 
 <template>
