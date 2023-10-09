@@ -117,7 +117,7 @@ export default class AddDjanazahDrawer extends Vue {
         :model-value="isDrawerOpen"
         @update:model-value="cancelDrawer">
 
-        <AppDrawerHeaderSection title="Nieuw djanazah gebed" @cancel="cancelDrawer(false)"/>
+        <AppDrawerHeaderSection :title="id ? 'Djanazah bijwerken' : 'Nieuw djanazah gebed'" @cancel="cancelDrawer(false)"/>
 
         <PerfectScrollbar :options="{ wheelPropagation: false }">
             <VCard flat>

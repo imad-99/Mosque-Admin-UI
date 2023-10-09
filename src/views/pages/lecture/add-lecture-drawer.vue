@@ -75,7 +75,7 @@ export default class AddLectureDrawer extends Vue {
         this.lecturer = newValue ? newValue : ""
     }
 
-    @Watch("inputPhoto")
+    @Watch("inputDuration")
     durationWatcher(newValue: string) {
         this.duration = newValue ? newValue : ""
     }
@@ -125,7 +125,7 @@ export default class AddLectureDrawer extends Vue {
         :model-value="isDrawerOpen"
         @update:model-value="cancelDrawer">
 
-        <AppDrawerHeaderSection title="Nieuwe lezing" @cancel="cancelDrawer(false)"/>
+        <AppDrawerHeaderSection :title="id ? 'Lezing bijwerken' : 'Nieuwe lezing'" @cancel="cancelDrawer(false)"/>
 
         <PerfectScrollbar :options="{ wheelPropagation: false }">
             <VCard flat>
@@ -133,7 +133,7 @@ export default class AddLectureDrawer extends Vue {
                     <VForm v-model="isFormValid" @submit.prevent="onSubmit()" ref="form">
                         <VRow>
                             <VCol cols="12">
-                                <AppTextField :rules="[defaultValidator]" label="Volledige naam*" v-model="name"/>
+                                <AppTextField :rules="[defaultValidator]" label="Naam*" v-model="name"/>
                             </VCol>
                             <VCol cols="12">
                                 <AppDateTimePicker :rules="[defaultValidator]" label="Datum*" v-model="date"/>

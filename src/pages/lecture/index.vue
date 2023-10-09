@@ -1,6 +1,6 @@
 <script lang="ts">
-import AddDjanazahDrawer from '@/views/pages/djanazah/add-djanazah-drawer.vue';
-import DjanazahDrawerEmit from '@/views/pages/djanazah/djanazah-drawer-emit';
+import AddLectureDrawer from '@/views/pages/lecture/add-lecture-drawer.vue';
+import LectureDrawerEmit from '@/views/pages/lecture/lecture-drawer-emit';
 import { EventType } from '@/views/shared/event-type';
 import PaginationComponent from '@/views/shared/pagination-component';
 import { Prayer } from '@/views/shared/prayer';
@@ -14,12 +14,12 @@ import { VDataTableServer } from 'vuetify/labs/VDataTable';
 @Component({
   components: {
     VDataTableServer,
-    AddDjanazahDrawer
+    AddLectureDrawer
   }
 })
 class LecturePage extends PaginationComponent {
   // state
-  viewDjanazahDrawer: boolean = false
+  viewLectureDrawer: boolean = false
   viewDeleteDialog: boolean = false
   documentIdToDelete: string = ""
   entryIdToDelete: string = ""
@@ -28,16 +28,18 @@ class LecturePage extends PaginationComponent {
     { title: 'Naam', key: 'name', sortable: false },
     { title: 'Datum', key: 'documentId', sortable: false },
     { title: 'Na', key: 'after', sortable: false },
-    { title: 'Foto', key: 'photo', sortable: false },
+    { title: 'Docent', key: 'lecturer', sortable: false },
+    { title: 'Duur (minuten)', key: 'duration', sortable: false },
     { title: 'Acties', key: 'actions', sortable: false }
   ]
 
-  // output props (DjanazahDrawer)
+  // output props (LectureDrawer)
   id: string | undefined
-  fullName: string | undefined
+  name: string | undefined
   date: string | undefined
   after: Prayer | undefined   
-  photo: string | undefined
+  lecturer: string | undefined
+  duration: string | undefined
 
   // non-state
   lectureController: LectureController = new LectureController();
@@ -90,17 +92,18 @@ class LecturePage extends PaginationComponent {
     })
   }
 
-  public showDjanazahDrawer(id?: string, fullName?: string, date?: string, after?: Prayer, photo?: string) {
+  public showLectureDrawer(id?: string, name?: string, date?: string, after?: Prayer, lecturer?: string, duration?: string) {
     this.id = id
-    this.fullName = fullName
+    this.name = name
     this.date = date
     this.after = after
-    this.photo = photo
-    this.viewDjanazahDrawer = true
+    this.lecturer = lecturer
+    this.duration = duration;
+    this.viewLectureDrawer = true
   }
   
-  public handleDrawerEvent(value: DjanazahDrawerEmit) {
-    this.viewDjanazahDrawer = value.visible
+  public handleDrawerEvent(value: LectureDrawerEmit) {
+    this.viewLectureDrawer = value.visible
     if (value.reload) {
       this.fetchLecture(this.tableFilter.page, this.tableFilter.itemsPerPage) 
     }
@@ -114,9 +117,9 @@ export default toNative(LecturePage)
   <section>
     <VRow>
       <VCol cols="12">
-        <VCard title="Djanazah">
+        <VCard title="Lezingen">
           <VCardText class="d-flex flex-wrap py-4 gap-4">
-            <VBtn prepend-icon="tabler-plus" @click="showDjanazahDrawer()">Nieuw djanazah gebed </VBtn>
+            <VBtn prepend-icon="tabler-plus" @click="showLectureDrawer()">Nieuwe lezing</VBtn>
           </VCardText>
           <VDataTableServer
               :items-per-page="tableFilter.itemsPerPage"
@@ -136,14 +139,17 @@ export default toNative(LecturePage)
             <template #item.after="{ item }">
               <span class="text-capitalize font-weight-medium">{{ item.props.title.after }}</span>
             </template>
-            <template #item.photo="{ item }">
-              <span class="text-capitalize font-weight-medium">{{ item.props.title.photo }}</span>
+            <template #item.lecturer="{ item }">
+              <span class="text-capitalize font-weight-medium">{{ item.props.title.lecturer }}</span>
+            </template>
+            <template #item.duration="{ item }">
+              <span class="text-capitalize font-weight-medium">{{ item.props.title.duration }}</span>
             </template>
             <template #item.actions="{ item }">
               <IconBtn @click="showDeleteDialog(item.props.title.documentId, item.props.title.id, item.props.title.name)">
                 <VIcon icon="tabler-trash" />
               </IconBtn>
-              <IconBtn @click="showDjanazahDrawer(item.props.title.id, item.props.title.name, item.props.title.documentId, item.props.title.after, item.props.title.photo)">
+              <IconBtn @click="showLectureDrawer(item.props.title.id, item.props.title.name, item.props.title.documentId, item.props.title.after, item.props.title.lecturer, item.props.title.duration)">
                 <VIcon icon="tabler-edit" />
               </IconBtn>
             </template>
@@ -158,17 +164,18 @@ export default toNative(LecturePage)
         </VCardText>
         <VCardActions class="d-flex justify-space-between">
           <VBtn color="light" @click="hideDeleteDialog()">Annuleren</VBtn>
-          <VBtn color="warning" @click="deleteDjanazah()">Verwijder</VBtn>
+          <VBtn color="warning" @click="deleteLecture()">Verwijder</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>
-    <AddDjanazahDrawer 
-      :isDrawerOpen="viewDjanazahDrawer" 
+    <AddLectureDrawer 
+      :isDrawerOpen="viewLectureDrawer" 
       :inputId="id"
-      :inputFullName="fullName" 
+      :inputName="name" 
       :inputDate="date"
       :inputAfter="after"
-      :inputPhoto="photo"
-      @djanazahDrawer="handleDrawerEvent"/>
+      :inputLecturer="lecturer"
+      :inputDuration="duration"
+      @lectureDrawer="handleDrawerEvent"/>
   </section>
 </template>
