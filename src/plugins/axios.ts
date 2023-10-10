@@ -7,7 +7,7 @@ const axiosIns = axios.create({
 const enableAuth = import.meta.env.VITE_APP_ENABLE_AUTH
 
 axiosIns.interceptors.request.use(config => {
-  if (enableAuth && Boolean(enableAuth)) {
+  if (enableAuth === 'true') {
     const token = localStorage.getItem(import.meta.env.VITE_APP_TOKEN_KEY)
 
     config.headers.Authorization = 'Bearer ' + token

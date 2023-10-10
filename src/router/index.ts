@@ -13,7 +13,7 @@ const router = createRouter({
 
 router.beforeEach(() => {
   const enableAuth = import.meta.env.VITE_APP_ENABLE_AUTH
-  if (enableAuth && Boolean(enableAuth)) {
+  if (enableAuth === 'true') {
     if (!localStorage.getItem(import.meta.env.VITE_APP_TOKEN_KEY)) {
       const params: ParsedQuery = queryString.parse(window.location.search);
       if (params.code) {
